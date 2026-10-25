@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Clock, ShieldCheck, XCircle, AlertCircle, PlusCircle, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { api } from '../services/api';
 import { useSafety } from '../context/SafetyContext';
+import { useToast } from '../context/ToastContext';
 
 export default function SafetyCheckIn() {
   const { activeCheckIn, refreshAllStatus } = useSafety();
+  const toast = useToast();
 
   const [durationMinutes, setDurationMinutes] = useState(15);
   const [label, setLabel] = useState('Walking across campus / Corridor');
@@ -50,9 +52,11 @@ export default function SafetyCheckIn() {
         locationNotes: locationNotes.trim()
       });
       await refreshAllStatus();
-      setFeedback(`Check-in timer started for ${durationMinutes} minutes.`);
+      const msg = `Check-in timer started — ${durationMinutes} minutes.`;
+      setFeedback(msg);
+      toast.success(msg);
     } catch (err) {
-      alert('Error starting check-in: ' + err.message);
+      toast.error('Error starting check-in: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -65,8 +69,9 @@ export default function SafetyCheckIn() {
       await api.confirmCheckInSafe(activeCheckIn._id || activeCheckIn.id);
       await refreshAllStatus();
       setFeedback('Confirmed! Great to know you are safe.');
+      toast.success('Check-in confirmed — glad you are safe!');
     } catch (err) {
-      alert('Error confirming safety: ' + err.message);
+      toast.error('Error confirming safety: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -79,8 +84,9 @@ export default function SafetyCheckIn() {
       await api.cancelCheckIn(activeCheckIn._id || activeCheckIn.id);
       await refreshAllStatus();
       setFeedback('Check-in timer cancelled.');
+      toast.info('Safety check-in cancelled.');
     } catch (err) {
-      alert('Error cancelling check-in: ' + err.message);
+      toast.error('Error cancelling check-in: ' + err.message);
     } finally {
       setLoading(false);
     }

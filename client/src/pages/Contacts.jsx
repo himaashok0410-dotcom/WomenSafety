@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { Users, Plus, Trash2, Edit2, Phone, Mail, ShieldAlert, Check, X, Lock, ExternalLink } from 'lucide-react';
 import { api } from '../services/api';
 import { useSafety } from '../context/SafetyContext';
+import { useToast } from '../context/ToastContext';
 
 export default function Contacts() {
   const { contacts, refreshAllStatus } = useSafety();
+  const toast = useToast();
+
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -68,25 +71,29 @@ export default function Contacts() {
     try {
       if (editingId) {
         await api.updateContact(editingId, formData);
+        toast.success(`${formData.name} updated successfully.`);
       } else {
         await api.createContact(formData);
+        toast.success(`${formData.name} added to your trusted contacts.`);
       }
       await refreshAllStatus();
       resetForm();
     } catch (err) {
       setErrorMsg(err.message || 'Failed to save contact.');
+      toast.error(err.message || 'Failed to save contact.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id, name) => {
-    if (!window.confirm(`Delete ${name} from your trusted contacts?`)) return;
+    if (!window.confirm(`Remove ${name} from your trusted contacts?`)) return;
     try {
       await api.deleteContact(id);
       await refreshAllStatus();
+      toast.success(`${name} removed from contacts.`);
     } catch (err) {
-      alert('Error deleting contact: ' + err.message);
+      toast.error('Error deleting contact: ' + err.message);
     }
   };
 

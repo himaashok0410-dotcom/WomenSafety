@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { MapPin, Navigation, Share2, Copy, Check, ShieldCheck, XCircle, Clock, AlertTriangle, ExternalLink } from 'lucide-react';
 import { api } from '../services/api';
 import { useSafety } from '../context/SafetyContext';
+import { useToast } from '../context/ToastContext';
 import { getCurrentCoordinates } from '../services/geolocation';
 
 export default function SafeJourney() {
   const { activeJourney, refreshAllStatus } = useSafety();
+  const toast = useToast();
 
   const [startLocation, setStartLocation] = useState('NITK Surathkal Campus');
   const [destination, setDestination] = useState('');
@@ -79,8 +81,9 @@ export default function SafeJourney() {
     try {
       await api.endJourney(activeJourney._id || activeJourney.id);
       await refreshAllStatus();
+      toast.success('Journey marked as safely completed. Great!');
     } catch (err) {
-      alert('Error ending journey: ' + err.message);
+      toast.error('Error ending journey: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -88,15 +91,16 @@ export default function SafeJourney() {
 
   const handleRevokeShare = async () => {
     if (!activeJourney) return;
-    if (!window.confirm('Are you sure you want to revoke the shared tracking link? Trusted contacts will no longer be able to view your route.')) {
+    if (!window.confirm('Revoke the shared tracking link? Trusted contacts will no longer be able to view your route.')) {
       return;
     }
     setLoading(true);
     try {
       await api.revokeJourneyShare(activeJourney._id || activeJourney.id);
       await refreshAllStatus();
+      toast.info('Tracking link revoked. Location is now private.');
     } catch (err) {
-      alert('Error revoking share link: ' + err.message);
+      toast.error('Error revoking share link: ' + err.message);
     } finally {
       setLoading(false);
     }

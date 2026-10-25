@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SafetyProvider, useSafety } from './context/SafetyContext';
+import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/Navbar';
 import SOSModal from './components/SOSModal';
 import Emergency112Modal from './components/Emergency112Modal';
@@ -113,9 +114,11 @@ function MainApp() {
 export default function App() {
   return (
     <AuthProvider>
-      <SafetyProvider>
-        <MainApp />
-      </SafetyProvider>
+      <ToastProvider>
+        <SafetyProvider>
+          <MainApp />
+        </SafetyProvider>
+      </ToastProvider>
     </AuthProvider>
   );
 }
