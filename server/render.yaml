@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: safeher-api
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node src/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_ORIGIN
+        value: https://safeher.vercel.app,http://localhost:5173
+      - key: NOTIFICATION_MODE
+        value: demo
+      # - key: MONGO_URI
+      #   sync: false

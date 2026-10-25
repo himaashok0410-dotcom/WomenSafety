@@ -1,0 +1,15 @@
+{
+  "name": "safeher",
+  "version": "1.0.0",
+  "description": "SafeHer - Your Journey. Your Choice. Your Safety. (Women's Safety Web App for recHERsion'26)",
+  "scripts": {
+    "install:all": "cmd /c \"cd server && npm install && cd ../client && npm install\"",
+    "start:server": "cmd /c \"cd server && npm start\"",
+    "start:client": "cmd /c \"cd client && npm run dev\"",
+    "test:server": "cmd /c \"cd server && npm test\"",
+    "build:client": "cmd /c \"cd client && npm run build\""
+  },
+  "keywords": ["safety", "women", "sos", "journey-tracking", "recHERsion26"],
+  "author": "SafeHer Team (recHERsion'26, ACM-W, NITK Surathkal)",
+  "license": "MIT"
+}
